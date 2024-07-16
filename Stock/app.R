@@ -58,7 +58,12 @@ server <- function(input, output) {
     })
   
   # Add in column for percent change from nominal
-  #db$percent_adj_movement <- (db$cumret_adjusted_prices-1)*100
+  # db$percent_adj_movement <- (db$cumret_adjusted_prices-1)*100
+  
+  # Once figured out above then need to add Moving Averages
+  # db <- na.omit(db)
+  # db$MA_50 <- SMA(db$price_close, n = 50)
+  # db$MA_200 <- SMA(db$price_close, n = 200)
   
   ###### GRAPHS #######
 
@@ -67,7 +72,7 @@ server <- function(input, output) {
       ggplot(db(), aes(x=ref_date, y=price_close)) +
         geom_line() +
         theme_bw() +
-        xlab('Date') + ylab('Percent Change [%]') +
+        xlab('Date') + ylab('Closing Price [$]') +
         ggtitle('Stock Performance Over Period of Time') +
         theme(plot.title = element_text(hjust = 0.5))
     })
