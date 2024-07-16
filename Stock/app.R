@@ -21,40 +21,51 @@ library(edgar)
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Stocks"),
-    
+  
+  # Application title
+  titlePanel(title=h4("Stocks", align="center")),
+  
+  sidebarPanel(
+  
     # Stock Input
     textInput(inputId="stockID", label="Pick a Stock", value = "AAPL", 
-              width = NULL, placeholder = NULL),
-    
+            width = NULL, placeholder = NULL),
+  
     # Date Range for Stock
     dateRangeInput("daterange1", "Date range:",
-                   start = Sys.Date()-30,
-                   end = Sys.Date()
-                   ),
+                 start = Sys.Date()-30,
+                 end = Sys.Date())
+  ),
+  
+  mainPanel(
+    
+    #Plot Graph
+    plotOutput("plot1")
+    
+    )
 )
+    
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
+  # Get the stock data from Yahoo
   db <- reactive({
     yf_get(
       tickers = input$stockID,
       first_date = input$daterange1[1],
-      last_date = input$daterange1[2]
-      )
-  })
+      last_date = input$daterange1[2])  
+    })
   
-  db$percent_adj_movement <- (db$cumret_adjusted_prices-1)*100
+  # Add in column for percent change from nominal
+  #db$percent_adj_movement <- (db$cumret_adjusted_prices-1)*100
   
   ###### GRAPHS #######
 
   # Plot of the closing price of stock
-    output$distPlot <- renderPlot({
-      ggplot(data=db, aes(x=ref_date)) +
-        geom_line(aes(y=percent_adj_movement)) +
+    output$plot1 <- renderPlot({
+      ggplot(db(), aes(x=ref_date, y=price_close)) +
+        geom_line() +
         theme_bw() +
         xlab('Date') + ylab('Percent Change [%]') +
         ggtitle('Stock Performance Over Period of Time') +
