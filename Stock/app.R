@@ -49,8 +49,8 @@ ui <- fluidPage(
   mainPanel(
     
     #Plot Graph
-    plotOutput("plot1"),
-    plotOutput("plot2")
+    plotOutput("plot2"),
+    plotOutput("plot1")
     
     )
 )
@@ -97,6 +97,10 @@ server <- function(input, output) {
 
   # Plot of the percent change of stock
     output$plot1 <- renderPlot({
+      
+      # Need a new column that looks at change over time and if positive then 
+      # color line green but if negative then color line red
+      
       ggplot(db2(), aes(x=ref_date, y=db2()$percent_adj_movement)) +
         geom_line(color="gray18", size = 1) +
         theme_bw() +
