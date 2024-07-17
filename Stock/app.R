@@ -23,7 +23,7 @@ library(edgar)
 ui <- fluidPage(
   
   # Application title
-  titlePanel(title=h4("Stocks", align="center")),
+  titlePanel(title=h4("Stocks", align="left")),
   
   sidebarPanel(
   
@@ -33,8 +33,17 @@ ui <- fluidPage(
   
     # Date Range for Stock
     dateRangeInput("daterange1", "Date range:",
-                 start = Sys.Date()-360,
-                 end = Sys.Date())
+                 start = Sys.Date()-720,
+                 end = Sys.Date()),
+    
+    # Moving Average Value
+    numericInput("SMA1", label="First Moving Average", 
+                 value=50, min=5, max = 200),
+    
+    # Moving Average Value
+    numericInput("SMA2", label="Second Moving Average", 
+                 value=200, min=5, max = 200)
+    
   ),
   
   mainPanel(
@@ -65,12 +74,12 @@ server <- function(input, output) {
   
   # Make new variable for SMA50
   MA50 <- reactive({
-    SMA(db()$price_close, n = 50)
+    SMA(db()$price_close, n = input$SMA1)
   })
   
   # Make new variable for SMA200
   MA200 <- reactive({
-    SMA(db()$price_close, n = 200)
+    SMA(db()$price_close, n = input$SMA2)
   })
   
   # Cbind into new data.frame
@@ -83,30 +92,16 @@ server <- function(input, output) {
     na.omit(db2())
   })
   
-
-  # Add in column for percent change from nominal
-  # db$percent_adj_movement <- (db$cumret_adjusted_prices-1)*100
-  ## Could add it in the calculation for AES of Y
-  
-  # Once figured out above then need to add Moving Averages
-  # db <- na.omit(db)
-  # db$MA_50 <- SMA(db$price_close, n = 50)
-  # db$MA_200 <- SMA(db$price_close, n = 200)
-  
-  # Another approach using getSymbols
-  # getSymbols("AAPL")
-  # db <- data.frame(date=index(AAPL), coredata(AAPL))
-
   
   ###### GRAPHS #######
 
   # Plot of the percent change of stock
     output$plot1 <- renderPlot({
       ggplot(db2(), aes(x=ref_date, y=db2()$percent_adj_movement)) +
-        geom_line() +
+        geom_line(color="gray18", size = 1) +
         theme_bw() +
         xlab('Date') + ylab('Percent Change over Time [%]') +
-        ggtitle('Stock Performance Over Period of Time') +
+        ggtitle('Stock Relative Growth over Time') +
         theme(plot.title = element_text(hjust = 0.5))
     })
     
@@ -119,9 +114,15 @@ server <- function(input, output) {
       # geom_line dependent on if statement
       
       ggplot(db2(), aes(x=ref_date)) +
-        geom_line(aes(y=price_close), color = "blue", size = 1) +
-        geom_line(aes(y = db2()$MA50), color = "orange", size = 1) +
-        geom_line(aes(y = db2()$MA200), color = "red", size = 1) +
+        geom_line(aes(y=price_close), 
+                  color = "gray18", 
+                  size = 1) +
+        geom_line(aes(y = db2()$MA50), 
+                  color = "dodgerblue3", 
+                  size = 1) +
+        geom_line(aes(y = db2()$MA200), 
+                  color = "darkblue", 
+                  size = 1) +
         theme_bw() +
         xlab('Date') + ylab('Price of Stock [$]') +
         ggtitle('Stock Performance Over Period of Time') +
