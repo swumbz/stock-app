@@ -73,15 +73,37 @@ server <- function(input, output) {
     (db()$cumret_adjusted_prices-1)*100
   })
   
-  # Make new variable for SMA50
-  MA50 <- reactive({
-    SMA(db()$price_close, n = input$SMA1)
-  })
+  # New variable checking SMA values to date range
+  SMA_check_Date <- reactive({
+    as.numeric(input$daterange1[2]-input$daterange1[1])})
+  SMA_check_SMA <- reactive({
+    as.numeric(min(input$SMA1,input$SMA2))})
   
-  # Make new variable for SMA200
+  # Old school MA50,200
   MA200 <- reactive({
-    SMA(db()$price_close, n = input$SMA2)
-  })
+    SMA(db()$price_close, n = input$SMA2)})
+  MA50 <- reactive({
+    SMA(db()$price_close, n = input$SMA1)})
+  
+  
+  # Make new variable for SMA50 that is only calculated when the date range is
+  # greater than moving average number... test 2 failed
+  # if (SMA_check_Date() > SMA_check_SMA()) {
+  #   MA50 <- reactive({
+  #     SMA(db()$price_close, n = input$SMA1)})
+  #   MA200 <- reactive({
+  #     SMA(db()$price_close, n = input$SMA2)})
+  # }else{
+  #   MA50 <- NULL
+  #   MA200 <- NULL
+  # }
+  
+  # Make new variable for SMA200 that is dependent on date range.... test 1 failed
+  # MA200 <- reactive({
+  #   if(as.numeric(input$daterange1[2]-input$daterange1[1]) > min(input$SMA1,input$SMA2)){
+  #     SMA(db()$price_close, n = input$SMA2)
+  #   }else{NULL}
+  # })
   
   # Cbind into new data.frame
   db2 <- reactive({
@@ -118,21 +140,22 @@ server <- function(input, output) {
       # average and then only display them if they meet the requirements. so 
       # geom_line dependent on if statement
       
-      ggplot(db2(), aes(x=ref_date)) +
-        geom_line(aes(y=price_close), 
-                  color = "gray18", 
-                  size = 1) +
-        geom_line(aes(y = db2()$MA50), 
-                  color = "springgreen2", 
-                  size = 1) +
-        geom_line(aes(y = db2()$MA200), 
-                  color = "chocolate2", 
-                  size = 1) +
-        theme_bw() +
-        xlab('Date') + ylab('Price of Stock [$]') +
-        ggtitle('Stock Performance Over Period of Time') +
-        theme(plot.title = element_text(hjust = 0.5)) +
-        scale_y_log10()
+        ggplot(db2(), aes(x=ref_date)) +
+          geom_line(aes(y=price_close), 
+                    color = "gray18", 
+                    size = 1) +
+          geom_line(aes(y = db2()$MA50), 
+                    color = "springgreen2", 
+                    size = 1) +
+          geom_line(aes(y = db2()$MA200), 
+                    color = "chocolate2", 
+                    size = 1) +
+          theme_bw() +
+          xlab('Date') + ylab('Price of Stock [$]') +
+          ggtitle('Stock Performance Over Period of Time') +
+          theme(plot.title = element_text(hjust = 0.5)) +
+          scale_y_log10()
+    
     })
     
 }
