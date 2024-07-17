@@ -6,6 +6,7 @@ library(shiny)
 # Plotting Packages
 library(ggplot2)
 library(ggthemes)
+library(ggrepel)
 
 # Data Packages
 library(csvread)
@@ -122,10 +123,10 @@ server <- function(input, output) {
                   color = "gray18", 
                   size = 1) +
         geom_line(aes(y = db2()$MA50), 
-                  color = "dodgerblue3", 
+                  color = "springgreen2", 
                   size = 1) +
         geom_line(aes(y = db2()$MA200), 
-                  color = "darkblue", 
+                  color = "chocolate2", 
                   size = 1) +
         theme_bw() +
         xlab('Date') + ylab('Price of Stock [$]') +
