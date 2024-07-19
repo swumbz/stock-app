@@ -20,6 +20,9 @@ library(quantmod)
 library(WeibullR)
 library(edgar)
 
+###### APP BELOW #######
+
+###### UI #######
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
@@ -39,11 +42,16 @@ ui <- fluidPage(
     
     # Moving Average Value
     numericInput("SMA1", label="First Moving Average", 
-                 value=50, min=5, max = 200),
+                 value=50, min=5, max = 500),
     
     # Moving Average Value
     numericInput("SMA2", label="Second Moving Average", 
-                 value=200, min=5, max = 200)
+                 value=200, min=5, max = 500),
+    
+    # Change limits and scale on Plot 2
+    numericInput("ymax1", label="Graph Upper Limit", value = NULL),
+    numericInput("ymin1", label="Graph Lower Limit", value = NULL),
+    selectInput("loglin1", "Y-Axis Setting", c("linear","log"))
     
   ),
   
@@ -56,7 +64,7 @@ ui <- fluidPage(
     )
 )
   
-
+###### SERVER #######
 # Define server logic required to draw a histogram
 server <- function(input, output) {
   
@@ -126,7 +134,7 @@ server <- function(input, output) {
       
       ggplot(db2(), aes(x=ref_date, y=db2()$percent_adj_movement)) +
         geom_line(color="gray18", size = 1) +
-        theme_bw() +
+        theme_light() +
         xlab('Date') + ylab('Percent Change over Time [%]') +
         ggtitle('Stock Relative Growth over Time') +
         theme(plot.title = element_text(hjust = 0.5))
@@ -139,7 +147,23 @@ server <- function(input, output) {
       # otherwise display entire graph.  Really should set two variables for moving 
       # average and then only display them if they meet the requirements. so 
       # geom_line dependent on if statement
-      
+      if(input$loglin1=="log"){
+          ggplot(db2(), aes(x=ref_date)) +
+            geom_line(aes(y=price_close), 
+                      color = "gray18", 
+                      size = 1) +
+            geom_line(aes(y = db2()$MA50), 
+                      color = "springgreen2", 
+                      size = 1) +
+            geom_line(aes(y = db2()$MA200), 
+                      color = "chocolate2", 
+                      size = 1) +
+            theme_light() +
+            xlab('Date') + ylab('Price of Stock [$]') +
+            ggtitle('Stock Performance Over Period of Time') +
+            theme(plot.title = element_text(hjust = 0.5)) +
+            scale_y_log10()
+      } else {
         ggplot(db2(), aes(x=ref_date)) +
           geom_line(aes(y=price_close), 
                     color = "gray18", 
@@ -150,12 +174,11 @@ server <- function(input, output) {
           geom_line(aes(y = db2()$MA200), 
                     color = "chocolate2", 
                     size = 1) +
-          theme_bw() +
+          theme_light() +
           xlab('Date') + ylab('Price of Stock [$]') +
           ggtitle('Stock Performance Over Period of Time') +
-          theme(plot.title = element_text(hjust = 0.5)) +
-          scale_y_log10()
-    
+          theme(plot.title = element_text(hjust = 0.5))
+      }
     })
     
 }
