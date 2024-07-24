@@ -18,9 +18,10 @@ library(tidyverse)
 library(yfR)
 library(quantmod)
 library(WeibullR)
-library(edgar)
+library(edgar) # SEC data and filings from company
 library(tidyedgar) #clean up edgar package : https://github.com/gerardgimenezadsuar/tidyedgar 
 library(lubridate) # will parse datestamps into "quarters" using quarter fct
+library(fredr) # FRED data
 
 ###### APP BELOW #######
 
