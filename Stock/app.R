@@ -19,6 +19,8 @@ library(yfR)
 library(quantmod)
 library(WeibullR)
 library(edgar)
+library(tidyedgar) #clean up edgar package : https://github.com/gerardgimenezadsuar/tidyedgar 
+library(lubridate) # will parse datestamps into "quarters" using quarter fct
 
 ###### APP BELOW #######
 
