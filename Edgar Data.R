@@ -50,6 +50,7 @@ popular_funds_series_id %>%
  
    ggplot(data = ., mapping = aes(x = date, y = value, color = series_id)) +
   geom_line() +
-  labs(x = "Observation Date", y = "Rate", color = "Series")
+  labs(x = "Observation Date", y = "Rate", color = "Series") +
+  theme_light()
 
 ####### FRED Data for ########
