@@ -29,15 +29,26 @@ library(fredr) # FRED data
 df <- yearly_data(years = 2015:2023)
 # old school dataframe subsetting
 df_old <- subset(df, df$data.entityName=="APPLE INC.")
-# new school with dplyr and tibbles -- 
+# new school subsetting with dplyr and tibbles -- 
 # ^ starts with and (?i) any capitalization
+# subsetting the comapnies below
 df_new <- df %>% 
-  filter(data.entityName %>% str_detect("(?i)apple") | 
+  filter(data.entityName %>% str_detect("^(?i)apple inc") | 
            data.entityName %>% str_detect("^(?i)microso") | 
-           data.entityName %>% str_detect("(?i)alphab")
+           data.entityName %>% str_detect("(?i)alphabet inc") | 
+           data.entityName %>% str_detect("(?i)tesla")
          ) 
 
+# Clean up by removing n/a and making sure Dates are Dates
+# df_new <- na.omit(df_new)
+df_new$data.end <- as.Date(df_new$data.end)
+df_new$data.start <- as.Date(df_new$data.start)
 
+# Plot
+p2 <- ggplot(df_new, aes(x=data.end,y=operating_margin*100, colour = data.entityName)) +
+  geom_line() +
+  theme_light()
+p2
 
 
 
