@@ -83,6 +83,9 @@ server <- function(input, output) {
     length(input$companies)
     })
   
+  # Now using length, make the subset of df based on number of companies selected
+  # so a for loop with df_new <- subset(df,df$entityname == input$companies[ii])
+  NNEEEDEDED TO DO
   
   # # subset the data frame to the companies
   # for(ii in 1:length(input$companies)){
