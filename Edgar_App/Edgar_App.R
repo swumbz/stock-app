@@ -71,7 +71,8 @@ ui <- fluidPage(
 
         # Show a plot of the generated distribution
         mainPanel(
-          textOutput("companiesSEL")
+          textOutput("companiesSEL"),
+          textOutput("companies_subset")
         )
     )
 )
@@ -85,7 +86,17 @@ server <- function(input, output) {
   
   # Now using length, make the subset of df based on number of companies selected
   # so a for loop with df_new <- subset(df,df$entityname == input$companies[ii])
-  NNEEEDEDED TO DO
+  
+  df_subset = reactive({
+      df %>% filter(data.entityName == input$companies)
+    })
+  
+  # This should match companiesSEL but doesnt
+  output$companies_subset <- renderText({ 
+    length(unique(df_subset()$data.entityName))
+    #unique(df_subset()$data.entityName)
+    #df_subset()$data.entityName
+  })
   
   # # subset the data frame to the companies
   # for(ii in 1:length(input$companies)){
