@@ -25,8 +25,21 @@ library(fredr) # FRED data
 ###### DATA ANALYSIS #######
 
 # Import all edgar data from 'edgar' package using 'tiny edgar'
+# Takes awhile -- 30-60 seconds
 df <- yearly_data(years = 2015:2023)
-df_new <- subset(df, df$data.entityName=="APPLE INC.")
+# old school dataframe subsetting
+df_old <- subset(df, df$data.entityName=="APPLE INC.")
+# new school with dplyr and tibbles -- 
+# ^ starts with and (?i) any capitalization
+df_new <- df %>% 
+  filter(data.entityName %>% str_detect("(?i)apple") | 
+           data.entityName %>% str_detect("^(?i)microso") | 
+           data.entityName %>% str_detect("(?i)alphab")
+         ) 
+
+
+
+
 
 # Only revenue data
 revenue1 <- get_ydata(account = "Revenues")
