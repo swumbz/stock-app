@@ -47,7 +47,11 @@ df_new$data.start <- as.Date(df_new$data.start)
 # Plot
 p2 <- ggplot(df_new, aes(x=data.end,y=operating_margin*100, colour = data.entityName)) +
   geom_line() +
-  theme_light()
+  theme_light() +
+  xlab('Date') + ylab('Operating Margin [%]') +
+  ggtitle('Financial Comparison') +
+  guides(color = guide_legend(title = "Companies")) +
+  theme(plot.title = element_text(hjust = 0.5)) 
 p2
 
 
