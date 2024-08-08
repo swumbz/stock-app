@@ -30,12 +30,13 @@ df <- yearly_data(years = 2015:2023)
 # old school dataframe subsetting
 df_old <- subset(df, df$data.entityName=="APPLE INC.")
 # new school subsetting with dplyr and tibbles -- 
-# ^ starts with and (?i) any capitalization
+# ^ starts with and (?i) any capitalization -- regex
 # subsetting the comapnies below
 df_new <- df %>% 
   filter(data.entityName %>% str_detect("^(?i)apple inc") | 
            data.entityName %>% str_detect("^(?i)microso") | 
            data.entityName %>% str_detect("(?i)alphabet inc") | 
+           data.entityName %>% str_detect("(?i)palantir") | 
            data.entityName %>% str_detect("(?i)tesla")
          ) 
 
@@ -45,10 +46,10 @@ df_new$data.end <- as.Date(df_new$data.end)
 df_new$data.start <- as.Date(df_new$data.start)
 
 # Plot
-p2 <- ggplot(df_new, aes(x=data.end,y=operating_margin*100, colour = data.entityName)) +
+p2 <- ggplot(df_new, aes(x=data.end,y=net_income/1e9, colour = data.entityName)) +
   geom_line() +
   theme_light() +
-  xlab('Date') + ylab('Operating Margin [%]') +
+  xlab('Date') + ylab('Net Income [$B]') +
   ggtitle('Financial Comparison') +
   guides(color = guide_legend(title = "Companies")) +
   theme(plot.title = element_text(hjust = 0.5)) 
